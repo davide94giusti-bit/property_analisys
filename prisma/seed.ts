@@ -1,8 +1,11 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { demoProperties } from '../lib/demo-data';
 import { calculateAnalysis } from '../lib/calculations/engine';
 
 const prisma = new PrismaClient();
+
+const toJsonInput = <T>(value: T): Prisma.InputJsonValue =>
+  JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 
 async function main() {
   const user = await prisma.user.upsert({
@@ -34,12 +37,12 @@ async function main() {
         propertyId: property.id,
         scenarioLabel: input.scenarioLabel,
         scenarioType: input.scenarioType,
-        purchaseAssumptions: input.purchase,
-        financingAssumptions: input.financing,
-        rentalAssumptions: input.rental,
-        operatingCostAssumptions: input.operatingCosts,
-        taxAssumptions: { vatLocalTaxPercent: input.operatingCosts.vatLocalTaxPercent },
-        outputSettings: input.outputSettings
+        purchaseAssumptions: toJsonInput(input.purchase),
+        financingAssumptions: toJsonInput(input.financing),
+        rentalAssumptions: toJsonInput(input.rental),
+        operatingCostAssumptions: toJsonInput(input.operatingCosts),
+        taxAssumptions: toJsonInput({ vatLocalTaxPercent: input.operatingCosts.vatLocalTaxPercent }),
+        outputSettings: toJsonInput(input.outputSettings)
       }
     });
     const result = calculateAnalysis(input);
