@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  properties Property[]
+  reports Report[]
+}
+
+model Property {
+  id             String          @id @default(cuid())
+  userId         String          @map("user_id")
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  address        String?
+  country        String?
+  region         String?
+  city           String?
+  neighborhood   String?
+  postalCode     String?         @map("postal_code")
+  latitude       Float?
+  longitude      Float?
+  propertyType   String?         @map("property_type")
+  bedrooms       Float?
+  bathrooms      Float?
+  sizeM2         Float?          @map("size_m2")
+  propertyPrice  Float?          @map("property_price")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  analysisInputs AnalysisInput[]
+  scenarios      Scenario[]
+  reports        Report[]
+}
+
+model AnalysisInput {
+  id                         String           @id @default(cuid())
+  propertyId                 String           @map("property_id")
+  property                   Property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  scenarioLabel              String           @map("scenario_label")
+  scenarioType               String           @map("scenario_type")
+  purchaseAssumptions        Json             @map("purchase_assumptions")
+  financingAssumptions       Json             @map("financing_assumptions")
+  rentalAssumptions          Json             @map("rental_assumptions")
+  operatingCostAssumptions   Json             @map("operating_cost_assumptions")
+  taxAssumptions             Json             @map("tax_assumptions")
+  outputSettings             Json             @map("output_settings")
+  createdAt                  DateTime         @default(now()) @map("created_at")
+  updatedAt                  DateTime         @updatedAt @map("updated_at")
+  results                    AnalysisResult[]
+}
+
+model AnalysisResult {
+  id                           String        @id @default(cuid())
+  analysisInputId              String        @map("analysis_input_id")
+  analysisInput                AnalysisInput @relation(fields: [analysisInputId], references: [id], onDelete: Cascade)
+  grossRevenue                 Float         @map("gross_revenue")
+  netRevenue                   Float         @map("net_revenue")
+  netMonthly                   Float         @map("net_monthly")
+  annualDebtService            Float         @map("annual_debt_service")
+  monthlyLoanPayment           Float         @map("monthly_loan_payment")
+  annualCashFlowAfterDebt      Float         @map("annual_cash_flow_after_debt")
+  monthlyCashFlowAfterDebt     Float         @map("monthly_cash_flow_after_debt")
+  coverageRatio                Float?        @map("coverage_ratio")
+  cashOnCashRoi                Float?        @map("cash_on_cash_roi")
+  paybackPeriod                Float?        @map("payback_period")
+  breakEvenOccupancy           Float?        @map("break_even_occupancy")
+  breakEvenAdr                 Float?        @map("break_even_adr")
+  grossYield                   Float?        @map("gross_yield")
+  netYield                     Float?        @map("net_yield")
+  capRate                      Float?        @map("cap_rate")
+  irr                          Float?
+  equityMultiple               Float?        @map("equity_multiple")
+  riskScore                    Float         @map("risk_score")
+  investmentScore              Float         @map("investment_score")
+  createdAt                    DateTime      @default(now()) @map("created_at")
+}
+
+model Scenario {
+  id           String   @id @default(cuid())
+  propertyId   String   @map("property_id")
+  property     Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  scenarioName String   @map("scenario_name")
+  scenarioType String   @map("scenario_type")
+  inputs       Json
+  results      Json
+  rank         Int?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+}
+
+
+model Report {
+  id         String   @id @default(cuid())
+  propertyId String   @map("property_id")
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportType String   @map("report_type")
+  fileUrl    String?  @map("file_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+}
