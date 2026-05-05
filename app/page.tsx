@@ -5,6 +5,7 @@ import { formatCurrency, formatNumber, formatPercent } from '@/lib/formatting';
 import { KpiCard } from '@/components/kpi/KpiCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { SavedApartmentsPanel } from '@/components/properties/SavedApartmentsPanel';
 
 export default function DashboardPage() {
   const rows = demoProperties.map((input) => ({ input, result: calculateAnalysis(input) }));
@@ -51,8 +52,13 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      <SavedApartmentsPanel
+        title="Saved apartments"
+        description="Your saved apartment analyses from this browser. Deleting one removes only this saved-list entry."
+      />
+
       <Card className="hidden md:block">
-        <CardHeader><CardTitle>Saved analyses</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Demo analyses</CardTitle></CardHeader>
         <CardContent>
           <div className="mb-2 text-xs text-slate-500">Scroll horizontally to inspect all portfolio metrics.</div>
           <div className="max-w-full overflow-x-auto rounded-xl border border-slate-200">

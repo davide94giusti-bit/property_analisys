@@ -35,6 +35,32 @@ The `/area-research` route and `/api/area/research` API are intentionally remove
 - Playwright for browser and responsive layout tests.
 - Prisma client scaffolding for future production persistence.
 
+
+## Saved Apartment Deletion
+
+Guest-mode saved apartment analyses are stored in browser `localStorage` under `property-platform:analyses`. The Prisma schema includes `Property`, `AnalysisInput`, `Scenario`, and `Report` models for future server-side persistence, but the current UI saves and deletes apartment history client-side.
+
+Users can delete previously saved/searched apartments from the saved-apartment lists on the dashboard, new-analysis history, and compare source list. Deletion requires a confirmation dialog. Confirming removes only the saved/search-history analysis entry from localStorage and refreshes the UI immediately; generated demo properties, scenario matrices, PDF exports, and completed report artifacts are not deleted because they are not persisted as child records in the current guest-mode flow.
+
+When the last saved apartment is deleted, the app shows the empty state:
+
+```text
+No saved apartments yet.
+Start a new analysis to add properties to your list.
+```
+
+To test locally in Windows PowerShell:
+
+```powershell
+npm install
+npm run typecheck
+npm run test
+npm run build
+npm run test:e2e
+```
+
+Run `npm run test:e2e` only when Playwright browsers are installed.
+
 ## Local Development
 
 Use Windows PowerShell from the project root:

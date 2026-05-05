@@ -37,7 +37,10 @@ export function AnalysisForm() {
   }
 
   function save() {
-    saveGuestAnalysis(values);
+    const id = values.id ?? crypto.randomUUID();
+    const input = { ...values, id };
+    saveGuestAnalysis(input);
+    form.setValue('id', id, { shouldDirty: false, shouldValidate: false });
     setSaved(true);
   }
 
@@ -119,7 +122,7 @@ export function AnalysisForm() {
           </CardContent>
         </Card>
         <Button className="w-full" onClick={save}><Save className="mr-2 h-4 w-4" />{saved ? 'Saved in guest mode' : 'Save analysis'}</Button>
-        <Button variant="secondary" className="w-full" onClick={() => form.reset(DEFAULT_ANALYSIS_INPUT)}><Calculator className="mr-2 h-4 w-4" />Reset to demo base case</Button>
+        <Button variant="secondary" className="w-full" onClick={() => { form.reset(DEFAULT_ANALYSIS_INPUT); setSaved(false); }}><Calculator className="mr-2 h-4 w-4" />Reset to demo base case</Button>
       </aside>
     </div>
   );

@@ -6,12 +6,17 @@ import { calculateAnalysis } from '@/lib/calculations/engine';
 import { formatCurrency, formatNumber, formatPercent } from '@/lib/formatting';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { SavedApartmentsPanel } from '@/components/properties/SavedApartmentsPanel';
 
 export function ComparisonClient() {
   const rows = useMemo(() => demoProperties.map((input) => ({ input, result: calculateAnalysis(input) })), []);
   const maxInvestment = Math.max(...rows.map((r) => r.result.investmentScore));
   return (
     <div className="min-w-0 space-y-4">
+      <SavedApartmentsPanel
+        title="Saved properties in comparison"
+        description="Delete saved apartments from the comparison source list without removing demo comparisons."
+      />
       <div className="grid gap-4 md:hidden">
         {rows.map(({ input, result }) => (
           <Card key={input.property.name}>
